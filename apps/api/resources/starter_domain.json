@@ -1,0 +1,9 @@
+{
+  "domain_name": "starter-cancer-targets",
+  "target_ids": [
+    "ENSG00000141510",
+    "ENSG00000012048"
+  ],
+  "max_associations_per_target": 5,
+  "publications_per_association": 3
+}

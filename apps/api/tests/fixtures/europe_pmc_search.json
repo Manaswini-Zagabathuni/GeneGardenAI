@@ -1,0 +1,19 @@
+{
+  "hitCount": 1,
+  "resultList": {
+    "result": [
+      {
+        "id": "FIXTURE-1",
+        "source": "MED",
+        "title": "Fixture publication for API contract testing",
+        "authorString": "Example A",
+        "journalTitle": "Fixture Journal",
+        "pubYear": "2024",
+        "abstractText": "Synthetic fixture text; not a scientific assertion.",
+        "doi": "https://doi.org/10.0000/fixture",
+        "pmid": "FIXTURE-1",
+        "isOpenAccess": "Y"
+      }
+    ]
+  }
+}

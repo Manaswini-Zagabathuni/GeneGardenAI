@@ -1,0 +1,59 @@
+.DS_Store
+.AppleDouble
+.LSOverride
+.idea/
+.vscode/
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+.secrets/
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.mypy_cache/
+.pyright/
+.pytest_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+
+# JavaScript and frontend tooling
+node_modules/
+dist/
+coverage/
+.vite/
+playwright-report/
+test-results/
+blob-report/
+
+# Local databases and runtime state
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+.data/
+data/local/
+
+# Logs and temporary files
+*.log
+*.pid
+*.tmp
+*.swp
+*.tsbuildinfo
+work/

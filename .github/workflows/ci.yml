@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: genegarden_test
+          POSTGRES_USER: genegarden
+          POSTGRES_PASSWORD: test-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U genegarden -d genegarden_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    defaults:
+      run:
+        working-directory: apps/api
+    env:
+      APP_ENV: test
+      DATABASE_URL: postgresql+asyncpg://genegarden:test-only-password@localhost:5432/genegarden_test
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: apps/api/pyproject.toml
+      - name: Install backend
+        run: python -m pip install -e '.[dev]'
+      - name: Lint and format
+        run: |
+          python -m ruff check src tests
+          python -m ruff format --check src tests
+      - name: Run migrations
+        run: python -m alembic upgrade head
+      - name: Run backend tests
+        run: python -m pytest
+      - name: Reproduce benchmark
+        run: >-
+          python -m genegarden_api.cli.benchmark
+          --benchmark resources/benchmarks/oncology_open_targets_26_09.json
+          --k 5
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npm run lint:web
+      - run: npm run format:web
+      - run: npm run test:web
+      - run: npm run build:web
+
+  containers:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v7
+      - name: Prepare non-secret development configuration
+        run: cp .env.example .env
+      - name: Validate Compose configuration
+        run: docker compose config --quiet
+      - name: Build application images
+        run: docker compose build api web

@@ -1,0 +1,17 @@
+{
+  "name": "genegarden-ai",
+  "private": true,
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=@genegarden/web",
+    "build:web": "npm run build --workspace=@genegarden/web",
+    "format:web": "npm run format --workspace=@genegarden/web",
+    "lint:web": "npm run lint --workspace=@genegarden/web",
+    "test:web": "npm run test --workspace=@genegarden/web"
+  },
+  "engines": {
+    "node": ">=22.12"
+  }
+}

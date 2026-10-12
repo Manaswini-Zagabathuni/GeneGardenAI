@@ -1,0 +1,25 @@
+{
+  "data": {
+    "target": {
+      "id": "ENSG00000141510",
+      "approvedSymbol": "FIXTURE_GENE",
+      "approvedName": "Fixture gene for contract tests",
+      "biotype": "protein_coding",
+      "associatedDiseases": {
+        "count": 1,
+        "rows": [
+          {
+            "disease": {
+              "id": "EFO_0000001",
+              "name": "Fixture disease",
+              "description": "Development fixture, not a biomedical claim."
+            },
+            "score": 0.73,
+            "datatypeScores": [{"id": "genetic_association", "score": 0.61}],
+            "datasourceScores": [{"id": "fixture_source", "score": 0.55}]
+          }
+        ]
+      }
+    }
+  }
+}

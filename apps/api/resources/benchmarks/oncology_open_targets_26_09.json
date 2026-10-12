@@ -1,0 +1,51 @@
+{
+  "name": "GeneGarden oncology edge-masking benchmark",
+  "version": "1.0.0",
+  "source": {
+    "name": "Open Targets Platform",
+    "url": "https://api.platform.opentargets.org/api/v4/graphql",
+    "data_release": "26.09",
+    "retrieved_at": "2026-10-11",
+    "construction": "Four targets were queried with associatedDiseases page size 25. The small transformed subset below retains the returned identifiers, labels, overall association scores, and datasource identifiers needed by the benchmark."
+  },
+  "entities": [
+    {"canonical_id": "ensembl:ENSG00000141510", "entity_type": "gene", "label": "TP53", "source_identifier": "ENSG00000141510"},
+    {"canonical_id": "ensembl:ENSG00000012048", "entity_type": "gene", "label": "BRCA1", "source_identifier": "ENSG00000012048"},
+    {"canonical_id": "ensembl:ENSG00000183765", "entity_type": "gene", "label": "CHEK2", "source_identifier": "ENSG00000183765"},
+    {"canonical_id": "ensembl:ENSG00000139618", "entity_type": "gene", "label": "BRCA2", "source_identifier": "ENSG00000139618"},
+    {"canonical_id": "mondo:MONDO_0018875", "entity_type": "disease", "label": "Li-Fraumeni syndrome", "source_identifier": "MONDO_0018875"},
+    {"canonical_id": "mondo:MONDO_0016419", "entity_type": "disease", "label": "hereditary breast carcinoma", "source_identifier": "MONDO_0016419"},
+    {"canonical_id": "mondo:MONDO_0004992", "entity_type": "disease", "label": "cancer", "source_identifier": "MONDO_0004992"},
+    {"canonical_id": "mondo:MONDO_0007254", "entity_type": "disease", "label": "breast cancer", "source_identifier": "MONDO_0007254"},
+    {"canonical_id": "mondo:MONDO_0008170", "entity_type": "disease", "label": "ovarian cancer", "source_identifier": "MONDO_0008170"},
+    {"canonical_id": "mondo:MONDO_0008315", "entity_type": "disease", "label": "prostate cancer", "source_identifier": "MONDO_0008315"}
+  ],
+  "relationships": [
+    {"source_entity_id": "ensembl:ENSG00000141510", "target_entity_id": "mondo:MONDO_0018875", "score": 0.8763240905984302, "datasource_ids": ["uniprot_variants", "eva", "genomics_england", "orphanet", "clingen", "gene2phenotype", "uniprot_literature", "eva_somatic", "impc", "europepmc"]},
+    {"source_entity_id": "ensembl:ENSG00000141510", "target_entity_id": "mondo:MONDO_0016419", "score": 0.739816542796779, "datasource_ids": ["eva", "eva_somatic", "genomics_england", "impc", "europepmc"]},
+    {"source_entity_id": "ensembl:ENSG00000141510", "target_entity_id": "mondo:MONDO_0004992", "score": 0.6840457807243849, "datasource_ids": ["reactome", "gwas_credible_sets", "gene_burden", "cancer_biomarkers", "europepmc"]},
+    {"source_entity_id": "ensembl:ENSG00000012048", "target_entity_id": "mondo:MONDO_0007254", "score": 0.8436508158150241, "datasource_ids": ["uniprot_variants", "gene_burden", "eva", "uniprot_literature", "europepmc"]},
+    {"source_entity_id": "ensembl:ENSG00000012048", "target_entity_id": "mondo:MONDO_0008170", "score": 0.8106717720582334, "datasource_ids": ["gene_burden", "eva", "eva_somatic", "uniprot_literature", "uniprot_variants", "europepmc"]},
+    {"source_entity_id": "ensembl:ENSG00000012048", "target_entity_id": "mondo:MONDO_0004992", "score": 0.7789700201953356, "datasource_ids": ["gene_burden", "reactome", "gene2phenotype", "cancer_biomarkers", "europepmc"]},
+    {"source_entity_id": "ensembl:ENSG00000183765", "target_entity_id": "mondo:MONDO_0007254", "score": 0.8381022506274866, "datasource_ids": ["gene_burden", "eva", "uniprot_variants", "gwas_credible_sets", "genomics_england", "uniprot_literature", "europepmc", "clinical_precedence"]},
+    {"source_entity_id": "ensembl:ENSG00000183765", "target_entity_id": "mondo:MONDO_0004992", "score": 0.7207207033254731, "datasource_ids": ["gene_burden", "gwas_credible_sets", "gene2phenotype", "europepmc", "clinical_precedence"]},
+    {"source_entity_id": "ensembl:ENSG00000183765", "target_entity_id": "mondo:MONDO_0018875", "score": 0.6862439716835321, "datasource_ids": ["eva", "genomics_england", "clingen", "gene2phenotype", "europepmc"]},
+    {"source_entity_id": "ensembl:ENSG00000183765", "target_entity_id": "mondo:MONDO_0008315", "score": 0.6768852189173356, "datasource_ids": ["eva", "uniprot_literature", "gene_burden", "gwas_credible_sets", "europepmc"]},
+    {"source_entity_id": "ensembl:ENSG00000139618", "target_entity_id": "mondo:MONDO_0007254", "score": 0.8625038232511896, "datasource_ids": ["uniprot_variants", "gene_burden", "eva", "gwas_credible_sets", "uniprot_literature", "europepmc"]},
+    {"source_entity_id": "ensembl:ENSG00000139618", "target_entity_id": "mondo:MONDO_0004992", "score": 0.8181279547906628, "datasource_ids": ["gene_burden", "reactome", "gwas_credible_sets", "gene2phenotype", "europepmc"]},
+    {"source_entity_id": "ensembl:ENSG00000139618", "target_entity_id": "mondo:MONDO_0008170", "score": 0.783932092761949, "datasource_ids": ["gene_burden", "eva", "eva_somatic", "europepmc"]},
+    {"source_entity_id": "ensembl:ENSG00000139618", "target_entity_id": "mondo:MONDO_0008315", "score": 0.7379928584434592, "datasource_ids": ["eva", "genomics_england", "gene_burden", "europepmc", "impc"]}
+  ],
+  "cases": [
+    {"case_id": "tp53_li_fraumeni", "source_id": "ensembl:ENSG00000141510", "expected_target_id": "mondo:MONDO_0018875", "max_path_length": 3},
+    {"case_id": "brca1_ovarian_cancer", "source_id": "ensembl:ENSG00000012048", "expected_target_id": "mondo:MONDO_0008170", "max_path_length": 3},
+    {"case_id": "chek2_prostate_cancer", "source_id": "ensembl:ENSG00000183765", "expected_target_id": "mondo:MONDO_0008315", "max_path_length": 3}
+  ],
+  "limitations": [
+    "This is a tiny engineering regression benchmark, not a biological validation study.",
+    "Expected and traversal relationships come from the same Open Targets release, creating source and aggregation leakage.",
+    "Each expected direct edge is masked before search; recovery only tests whether the remaining small graph provides an indirect route.",
+    "The selected diseases and genes are not representative of all disease areas or evidence availability patterns.",
+    "Open Targets association scores are heuristic ranking values and are not probabilities or ground-truth confidence labels."
+  ]
+}
