@@ -34,6 +34,7 @@ the deterministic research assistant do not require a paid service.
 | Variable | Required | Purpose |
 | --- | --- | --- |
 | `DATABASE_URL` | API | SQLAlchemy async PostgreSQL URL. Treat as a secret outside local development. |
+| `DATABASE_READINESS_TIMEOUT_SECONDS` | API | Maximum duration for the readiness database round trip (default 5, maximum 30). |
 | `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` | Compose database | Local database initialization. Replace the example password in shared environments. |
 | `API_CORS_ORIGINS` | API | JSON array of allowed frontend origins; use the exact HTTPS production origin. |
 | `OPEN_TARGETS_GRAPHQL_URL` | API | Open Targets public GraphQL endpoint. |
@@ -76,8 +77,8 @@ Recommended production changes:
    filesystem only after verifying runtime temporary-directory requirements on the target platform.
 6. Send application logs to centralized storage. Request logging includes method, path, status, and
    duration but intentionally excludes request bodies and credentials.
-7. Alert separately on process health, database reachability, upstream failures, and ingestion-run
-   failures. `/health` currently confirms process availability only.
+7. Alert separately on process health (`/health`), database reachability (`/ready`), upstream
+   failures, and ingestion-run failures.
 8. Schedule ingestion deliberately instead of on application startup. Review upstream attribution,
    licensing, rate limits, and source-specific redistribution constraints before increasing scope.
 
@@ -106,6 +107,7 @@ docker compose config --quiet
 docker compose build api web
 docker compose up -d
 curl --fail http://localhost:8000/api/v1/health
+curl --fail http://localhost:8000/api/v1/ready
 curl --fail http://localhost:5173/healthz
 ```
 

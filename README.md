@@ -106,7 +106,8 @@ reference and is not imported by the home, discovery, graph, evidence, or compar
 Screenshots are intentionally not committed as evidence of a live biomedical deployment. To capture
 portfolio images from the reproducible local interface:
 
-1. Run the Docker setup and starter ingestion below.
+1. Run either the Docker-free hosted PostgreSQL setup in `docs/local-development.md` or the Compose
+   setup below, then complete one bounded starter ingestion.
 2. Open <http://localhost:5173> at a 1440 × 900 browser viewport.
 3. Capture `#home`, `#discover`, `#compare`, `#evaluation`, and `#methodology`.
 4. For the evidence explorer, use an identifier returned by the ingestion command; keep the visible
@@ -117,7 +118,7 @@ portfolio images from the reproducible local interface:
 Before publishing screenshots, verify that they contain no local credentials, private hostnames, or
 unreviewed copyrighted full text.
 
-## Run with Docker (recommended)
+## Run with Docker Compose
 
 Requirements: Docker with Compose support.
 
@@ -137,31 +138,35 @@ Open the web app at <http://localhost:5173>, API documentation at <http://localh
 
 ## Run without Docker
 
-Use Python 3.12+ and Node.js 22.12+.
+Use Python 3.12+ and Node.js 22.12+. A hosted PostgreSQL workflow (including current Neon
+connection-string handling) is documented in [docs/local-development.md](docs/local-development.md).
+It keeps both application processes on the Mac and uses Docker for nothing.
 
 ```bash
+python3.12 -m venv work/venv       # skip when work/venv already exists
+work/venv/bin/python -m pip install -e './apps/api[dev]'
 cp .env.example .env
-cd apps/api
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install -e '.[dev]'
-alembic upgrade head
-uvicorn genegarden_api.main:app --reload
+chmod 600 .env
+# Edit DATABASE_URL in .env; never paste the credential into chat or commit it.
+make local-migrate
+make dev-api-local
 ```
 
 In another terminal, from the repository root:
 
 ```bash
 npm ci
-npm run dev:web
+make dev-web-local
 ```
 
-For local PostgreSQL outside Docker, ensure the database described by `DATABASE_URL` exists. The current health endpoint checks the API process only and does not imply database or upstream-source availability.
+`GET /api/v1/health` checks only the API process. `GET /api/v1/ready` performs a bounded `SELECT 1`
+against the configured PostgreSQL database and returns `503` without driver details when it cannot
+connect. Neither endpoint checks the public biomedical APIs.
 
-Run the reproducible starter ingestion from `apps/api`:
+Run the reproducible starter ingestion from the repository root:
 
 ```bash
-python -m genegarden_api.cli.ingest --manifest resources/starter_domain.json
+make local-ingest-starter
 ```
 
 The starter manifest resolves two Ensembl target IDs live, retains at most five Open Targets associations per target, and retrieves at most three Europe PMC results per association. It therefore makes at most two Open Targets requests and ten Europe PMC searches. Names, associations, scores, and publications are not hard-coded. Expand the domain by creating another reviewed manifest; keep API requests small, or use the sources' documented bulk-access routes for systematic analysis.
@@ -265,15 +270,15 @@ make check
 Run the deterministic browser suite with `npm run test:e2e`. It mocks the HTTP contracts and is
 separate from the PostgreSQL/live-source procedure in `docs/end-to-end-testing.md`.
 
-The initial 2026-10-11 portfolio-readiness run completed 40 backend tests with 87.58% statement
-coverage. The subsequent verified-frontend integration run completed 24 frontend tests across eight
-files. It also completed Ruff lint/format checks, ESLint, Prettier,
-strict TypeScript compilation, the Vite production build, and the benchmark command. Docker itself
-was unavailable in that review environment, so container construction was not claimed as locally
-verified; `.github/workflows/ci.yml` performs Compose validation and image builds on GitHub runners.
-The backend package was also installed into a fresh temporary virtual environment, while an isolated
-frontend copy completed `npm ci` and the full frontend gate. This verifies clean dependency installs,
-but not a live PostgreSQL/Docker startup on that machine.
+The 2026-10-12 release-readiness run completed 46 backend tests with 87.83% statement coverage, 26
+frontend tests across nine files, and four deterministic Playwright tests. Ruff lint/format checks,
+ESLint, Prettier, strict TypeScript compilation, and the Vite production build also passed. The
+Docker-free workflow has been exercised with Neon: Alembic completed, readiness reached the database,
+the bounded starter ingestion stored 12 entities, 10 relationships, 75 evidence records, and 27
+publications, and the UI returned five backend-ranked TP53 paths with persisted provenance. The final
+audit repeated read-only health, readiness, discovery, and evidence requests but did not repeat the
+migration or ingestion. Docker image construction remains unverified locally; GitHub Actions is
+configured to validate Compose and build both images on GitHub runners.
 
 Backend dependencies and tools are declared in `apps/api/pyproject.toml`; frontend dependencies and scripts are declared in the root workspace and `apps/web/package.json`. The committed `package-lock.json` locks the complete frontend dependency tree; use `npm ci` in clean and CI environments.
 
@@ -330,7 +335,7 @@ at 2,000. Exceeding a limit returns a structured error instead of a silent parti
 - Add versioned raw-source snapshots and field-level lineage.
 - Move ingestion to resumable background jobs with source-specific rate limiting.
 - Evaluate temporal or independently curated benchmarks with confidence intervals and leakage audits.
-- Add database readiness, OpenTelemetry traces, metrics, dependency scanning, and container scanning.
+- Add upstream dependency diagnostics, OpenTelemetry traces, metrics, dependency scanning, and container scanning.
 - Benchmark PostgreSQL recursive queries or a graph database when graph scale warrants it.
 - Add a reviewed LLM adapter with structured outputs, entailment checks, and human feedback.
 - Add user accounts and saved explorations only after defining privacy and retention requirements.
@@ -340,4 +345,7 @@ See `docs/deployment.md` for local and production deployment guidance and
 
 ## License and safety
 
-Choose a repository license before public release. GeneGarden AI is for research and education only; it must not be presented as medical advice or used for clinical decisions.
+No repository license has been selected and no `LICENSE` file is included. The owner must choose a
+license before describing the repository as open source; this review intentionally does not choose
+one. GeneGarden AI is for research and education only; it must not be presented as medical advice or
+used for clinical decisions.

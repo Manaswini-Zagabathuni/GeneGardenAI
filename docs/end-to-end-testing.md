@@ -22,8 +22,23 @@ come from `apps/web/src/test/verifiedFixtures.ts` and are test-only records.
 
 ## Live PostgreSQL and external-source demonstration
 
-Requirements: Docker Engine with Compose v2 and outbound HTTPS access to the documented Open Targets
-and Europe PMC endpoints.
+For the verified Docker-free workflow, use Python 3.12+, Node.js 22.12+, a hosted PostgreSQL database
+such as Neon, and outbound HTTPS access to the documented Open Targets and Europe PMC endpoints.
+Follow `docs/local-development.md` to configure the private `.env` file, then run:
+
+```bash
+make local-migrate
+make local-ingest-starter
+# Terminal 1:
+make dev-api-local
+# Terminal 2:
+make dev-web-local
+curl --fail http://localhost:8000/api/v1/health
+curl --fail http://localhost:8000/api/v1/ready
+```
+
+Run the ingestion command once for a new or intentionally refreshed database; do not repeat it as a
+routine application-startup step. A Docker Compose alternative remains available:
 
 ```bash
 cp .env.example .env
@@ -34,6 +49,7 @@ docker compose exec api alembic current
 docker compose exec api python -m genegarden_api.cli.ingest \
   --manifest resources/starter_domain.json
 curl --fail http://localhost:8000/api/v1/health
+curl --fail http://localhost:8000/api/v1/ready
 curl --fail http://localhost:5173/healthz
 ```
 

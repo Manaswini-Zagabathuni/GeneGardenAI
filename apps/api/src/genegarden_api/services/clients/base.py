@@ -72,9 +72,10 @@ class ResilientJsonClient:
         last_error: Exception | None = None
         for attempt in range(self._max_attempts):
             try:
+                request_url = self._base_url if not path else f"{self._base_url}/{path.lstrip('/')}"
                 response = await self._client.request(
                     method,
-                    f"{self._base_url}/{path.lstrip('/')}",
+                    request_url,
                     params=params,
                     json=json_body,
                     timeout=self._timeout,

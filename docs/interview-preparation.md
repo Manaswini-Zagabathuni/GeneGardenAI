@@ -88,9 +88,9 @@ I would separate ingestion into an idempotent job queue, store immutable source 
 temporal dataset versions, and introduce request-level caching keyed by graph version. For search, I
 would benchmark database-native traversal or a graph store before changing architecture. For
 evaluation, I would use preregistered temporal splits or an independent curated source, more disease
-areas, confidence intervals, and leakage checks. Operationally, I would add database readiness,
-metrics and tracing, SLOs, automated backups, dependency scanning, image scanning, and a staged
-migration/release process.
+areas, confidence intervals, and leakage checks. Operationally, I would add upstream dependency
+diagnostics, metrics and tracing, SLOs, automated backups, dependency scanning, image scanning, and
+a staged migration/release process.
 
 ## Architecture trade-offs to emphasize
 
@@ -113,6 +113,6 @@ migration/release process.
 4. Hybrid keyword/vector literature retrieval with claim-level entailment checks.
 5. Graph snapshots partitioned by data release and research domain.
 6. User-saved explorations with immutable query and algorithm-version metadata.
-7. OpenTelemetry traces, Prometheus metrics, database readiness, and upstream health dashboards.
+7. OpenTelemetry traces, Prometheus metrics, and upstream health dashboards beyond database readiness.
 8. Independent evaluation datasets, temporal holdouts, uncertainty intervals, and automated leakage
    audits.

@@ -37,10 +37,14 @@ async def test_open_targets_validates_and_caches_documented_shape() -> None:
         requests += 1
         assert request.headers["user-agent"] == "GeneGarden-test"
         assert request.method == "POST"
+        assert str(request.url) == "https://api.platform.opentargets.org/api/v4/graphql"
         return httpx.Response(200, json=fixture("open_targets_target.json"))
 
     arguments = client_arguments(httpx.MockTransport(handler))
-    client = OpenTargetsClient(base_url="https://example.test/graphql", **arguments)
+    client = OpenTargetsClient(
+        base_url="https://api.platform.opentargets.org/api/v4/graphql/",
+        **arguments,
+    )
     first = await client.fetch_target_associations("ENSG00000141510")
     second = await client.fetch_target_associations("ENSG00000141510")
     await arguments["client"].aclose()

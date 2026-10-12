@@ -3,6 +3,7 @@ from datetime import datetime
 import httpx
 import pytest
 from pydantic import ValidationError
+from sqlalchemy.engine import make_url
 
 from genegarden_api.core.config import Settings
 from genegarden_api.main import app
@@ -50,6 +51,38 @@ def test_production_configuration_rejects_development_credentials_and_http_cors(
         api_cors_origins=["https://example.com"],
     )
     assert settings.app_env == "production"
+
+
+def test_neon_database_url_is_normalized_for_asyncpg_without_losing_tls() -> None:
+    settings = Settings(
+        _env_file=None,
+        database_url=(
+            "postgresql://portfolio_user:example-password@"
+            "ep-example.us-east-2.aws.neon.tech/neondb"
+            "?sslmode=require&channel_binding=require"
+        ),
+    )
+
+    normalized = make_url(str(settings.database_url))
+    assert normalized.drivername == "postgresql+asyncpg"
+    assert normalized.query["ssl"] == "require"
+    assert "sslmode" not in normalized.query
+    assert "channel_binding" not in normalized.query
+
+
+def test_neon_database_url_requires_tls_and_database_driver_must_be_supported() -> None:
+    with pytest.raises(ValidationError, match="must require TLS") as validation_error:
+        Settings(
+            _env_file=None,
+            database_url=(
+                "postgresql://portfolio_user:example-password@"
+                "ep-example.us-east-2.aws.neon.tech/neondb"
+            ),
+        )
+    assert "example-password" not in str(validation_error.value)
+
+    with pytest.raises(ValidationError, match="PostgreSQL with the asyncpg driver"):
+        Settings(_env_file=None, database_url="sqlite:///local.db")
 
 
 def test_domain_schema_rejects_naive_timestamp_and_unknown_fields() -> None:
