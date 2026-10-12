@@ -9,7 +9,8 @@
     "build:web": "npm run build --workspace=@genegarden/web",
     "format:web": "npm run format --workspace=@genegarden/web",
     "lint:web": "npm run lint --workspace=@genegarden/web",
-    "test:web": "npm run test --workspace=@genegarden/web"
+    "test:web": "npm run test --workspace=@genegarden/web",
+    "test:e2e": "npm run test:e2e --workspace=@genegarden/web"
   },
   "engines": {
     "node": ">=22.12"

@@ -15,15 +15,15 @@ retrieval-grounded assistant.
 
 ## Technology stack
 
-| Layer        | Technology                                                                 |
-| ------------ | -------------------------------------------------------------------------- |
-| Web          | React 19, TypeScript, Vite, Tailwind CSS, Cytoscape.js                     |
-| API          | Python 3.12, FastAPI, Pydantic, HTTPX                                      |
-| Graph        | NetworkX bounded multigraph traversal and transparent ranking              |
-| Persistence  | PostgreSQL 17, SQLAlchemy asyncio, Alembic                                 |
-| Data sources | Open Targets Platform GraphQL and Europe PMC REST                          |
-| Quality      | Pytest, Vitest, Testing Library, Ruff, ESLint, Prettier, strict TypeScript |
-| Delivery     | Multi-stage Dockerfiles, Docker Compose, Nginx, GitHub Actions             |
+| Layer        | Technology                                                                             |
+| ------------ | -------------------------------------------------------------------------------------- |
+| Web          | React 19, TypeScript, Vite, Tailwind CSS, Cytoscape.js                                 |
+| API          | Python 3.12, FastAPI, Pydantic, HTTPX                                                  |
+| Graph        | NetworkX bounded multigraph traversal and transparent ranking                          |
+| Persistence  | PostgreSQL 17, SQLAlchemy asyncio, Alembic                                             |
+| Data sources | Open Targets Platform GraphQL and Europe PMC REST                                      |
+| Quality      | Pytest, Vitest, Testing Library, Playwright, Ruff, ESLint, Prettier, strict TypeScript |
+| Delivery     | Multi-stage Dockerfiles, Docker Compose, Nginx, GitHub Actions                         |
 
 ## Architecture
 
@@ -261,6 +261,9 @@ Or run the complete local gate, including the frozen benchmark and production fr
 ```bash
 make check
 ```
+
+Run the deterministic browser suite with `npm run test:e2e`. It mocks the HTTP contracts and is
+separate from the PostgreSQL/live-source procedure in `docs/end-to-end-testing.md`.
 
 The initial 2026-10-11 portfolio-readiness run completed 40 backend tests with 87.58% statement
 coverage. The subsequent verified-frontend integration run completed 24 frontend tests across eight
