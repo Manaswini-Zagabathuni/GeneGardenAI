@@ -32,25 +32,62 @@ def test_settings_parse_safe_configuration_and_reject_invalid_limits() -> None:
         Settings(_env_file=None, assistant_llm_provider="unconfigured-provider")
 
 
-def test_production_configuration_rejects_development_credentials_and_http_cors() -> None:
-    with pytest.raises(ValidationError, match="development database password"):
+@pytest.mark.parametrize(
+    "database_url",
+    [
+        "postgresql+asyncpg://genegarden:genegarden@localhost:5432/genegarden",
+        ("postgresql+asyncpg://genegarden:test-only-password@localhost:5432/genegarden_test"),
+    ],
+)
+def test_production_configuration_rejects_development_and_test_credentials(
+    database_url: str,
+) -> None:
+    with pytest.raises(ValidationError, match="development or test database credentials"):
+        Settings(
+            _env_file=None,
+            app_env="production",
+            database_url=database_url,
+            api_cors_origins=["https://example.com"],
+        )
+
+
+def test_production_configuration_validates_database_url_from_environment(monkeypatch) -> None:
+    monkeypatch.setenv(
+        "DATABASE_URL",
+        "postgresql+asyncpg://genegarden:test-only-password@localhost:5432/genegarden_test",
+    )
+
+    with pytest.raises(ValidationError, match="development or test database credentials"):
         Settings(_env_file=None, app_env="production", api_cors_origins=["https://example.com"])
+
+
+def test_production_configuration_rejects_http_cors_and_accepts_safe_values() -> None:
+    safe_database_url = "postgresql+asyncpg://app:strong-password@db:5432/genegarden"
 
     with pytest.raises(ValidationError, match="must use HTTPS"):
         Settings(
             _env_file=None,
             app_env="production",
-            database_url="postgresql+asyncpg://app:strong-password@db:5432/genegarden",
+            database_url=safe_database_url,
             api_cors_origins=["http://example.com"],
         )
 
     settings = Settings(
         _env_file=None,
         app_env="production",
-        database_url="postgresql+asyncpg://app:strong-password@db:5432/genegarden",
+        database_url=safe_database_url,
         api_cors_origins=["https://example.com"],
     )
     assert settings.app_env == "production"
+
+
+def test_local_development_configuration_keeps_documented_defaults(monkeypatch) -> None:
+    monkeypatch.delenv("DATABASE_URL", raising=False)
+
+    settings = Settings(_env_file=None, app_env="development")
+
+    assert settings.app_env == "development"
+    assert settings.database_url.hosts()[0]["host"] == "localhost"
 
 
 def test_neon_database_url_is_normalized_for_asyncpg_without_losing_tls() -> None:

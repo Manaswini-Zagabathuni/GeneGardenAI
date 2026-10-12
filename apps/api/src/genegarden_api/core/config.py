@@ -8,6 +8,7 @@ from sqlalchemy.exc import ArgumentError
 
 _POSTGRES_DRIVERS = {"postgres", "postgresql", "postgresql+asyncpg"}
 _TLS_SSL_MODES = {"require", "verify-ca", "verify-full"}
+_INSECURE_PRODUCTION_DATABASE_PASSWORDS = frozenset({"genegarden", "test-only-password"})
 
 
 def normalize_async_database_url(value: object) -> str:
@@ -93,8 +94,13 @@ class Settings(BaseSettings):
     def reject_insecure_production_defaults(self) -> "Settings":
         if self.app_env != "production":
             return self
-        if any(host.get("password") == "genegarden" for host in self.database_url.hosts()):
-            raise ValueError("Production must not use the documented development database password")
+        if any(
+            host.get("password") in _INSECURE_PRODUCTION_DATABASE_PASSWORDS
+            for host in self.database_url.hosts()
+        ):
+            raise ValueError(
+                "Production must not use documented development or test database credentials"
+            )
         if any(origin.scheme != "https" for origin in self.api_cors_origins):
             raise ValueError("Production CORS origins must use HTTPS")
         return self
