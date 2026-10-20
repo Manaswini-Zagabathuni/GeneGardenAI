@@ -1,6 +1,6 @@
 # GeneGarden AI
 
-GeneGarden AI is an evidence grounded biomedical discovery platform for exploring possible relationships among genes, proteins, pathways, and diseases. It is a research and educational tool—not a diagnostic or clinical decision-making system.
+GeneGarden AI is an evidence grounded biomedical discovery platform for exploring possible relationships among genes, proteins, pathways, and diseases. It is a research and educational tool; not a diagnostic or clinical decision-making system.
 
 This repository contains a botanical research dashboard, a typed FastAPI service, a provenance-aware PostgreSQL knowledge graph, bounded clients for Open Targets and Europe PMC, NetworkX graph construction, Docker development infrastructure, and deterministic tests. It deliberately contains no fabricated biomedical citations or evaluation claims.
 
