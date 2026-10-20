@@ -343,6 +343,7 @@ at 2,000. Exceeding a limit returns a structured error instead of a silent parti
 See `docs/deployment.md` for local and production deployment guidance and
 `docs/interview-preparation.md` for project-specific interview questions and model answers.
 
+
 ## License and safety
 
 No repository license has been selected and no `LICENSE` file is included. The owner must choose a
